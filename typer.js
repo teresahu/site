@@ -4,7 +4,7 @@ var Typer = function(element) {
   var words = element.dataset.words || "override these,sample typing";
   this.words = words.split(delim).filter(function(v){return v;}); // non empty words
   this.delay = element.dataset.delay || 200;
-  this.loop = element.dataset.loop || "false";
+  this.loop = element.dataset.loop || "true";
   this.deleteDelay = element.dataset.deletedelay || element.dataset.deleteDelay || 800;
 
   this.progress = { word:0, char:0, building:true, atWordEnd:false, looped: 0 };
@@ -62,7 +62,12 @@ Typer.prototype.doTyping = function() {
   if(p.atWordEnd) p.looped += 1;
 
   if(!p.building && (this.loop == "false" || this.loop <= p.looped) ){
+    var myself = this;
     this.typing = false;
+    var that = this;
+    setTimeout(function() {
+      that.cursor.fadeBlink();
+    }, 2600);
   }
 
   var myself = this;
@@ -90,6 +95,10 @@ Cursor.prototype.updateBlinkState = function() {
     this.element.style.opacity = "1";
     this.on = true;
   }
+}
+Cursor.prototype.fadeBlink = function() {
+  clearInterval(this.interval);
+  this.on = false;
 }
 
 function TyperSetup() {
